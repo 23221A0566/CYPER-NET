@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CYPER NET — Cryptography Lab</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+<!-- ═══════════════════ PARTICLE CANVAS ═══════════════════ -->
+<canvas id="particleCanvas"></canvas>
+
+<!-- ═══════════════════ LOGIN SCREEN ═══════════════════ -->
+<div id="loginScreen" class="screen active">
+  <div class="login-wrapper">
+    <div class="login-logo">
+      <div class="logo-hex">
+        <svg viewBox="0 0 100 115" width="80"><polygon points="50,5 95,27.5 95,87.5 50,110 5,87.5 5,27.5" fill="none" stroke="var(--cyan)" stroke-width="2"/><polygon points="50,18 83,36.5 83,78.5 50,97 17,78.5 17,36.5" fill="none" stroke="var(--purple)" stroke-width="1" opacity="0.5"/><text x="50" y="62" text-anchor="middle" fill="var(--cyan)" font-family="Orbitron" font-size="12" font-weight="700">CN</text></svg>
+      </div>
+      <h1 class="login-title">CYPER NET</h1>
+      <p class="login-sub">CRYPTOGRAPHY RESEARCH TERMINAL</p>
+    </div>
+    <div class="login-panel">
+      <div class="scan-line"></div>
+      <div class="login-field-group">
+        <label class="field-label">ACCESS ID</label>
+        <div class="neon-input-wrap">
+          <span class="input-icon">⬡</span>
+          <input type="text" id="loginUser" class="neon-input" placeholder="Enter username" autocomplete="off"/>
+        </div>
+      </div>
+      <div class="login-field-group">
+        <label class="field-label">AUTH KEY</label>
+        <div class="neon-input-wrap">
+          <span class="input-icon">◈</span>
+          <input type="password" id="loginPass" class="neon-input" placeholder="Enter password"/>
+        </div>
+      </div>
+      <div id="loginError" class="login-error"></div>
+      <button class="btn-primary pulse-btn" onclick="login()">
+        <span class="btn-text">INITIATE ACCESS</span>
+        <span class="btn-glitch"></span>
+      </button>
+      <p class="login-hint">Default: <span>admin</span> / <span>1234</span></p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ MAIN APP ═══════════════════ -->
+<div id="mainApp" class="screen">
+
+  <!-- SIDE NAV -->
+  <nav class="sidenav" id="sidenav">
+    <div class="nav-brand">
+      <div class="brand-hex">CN</div>
+      <span class="brand-text">CYPER NET</span>
+    </div>
+    <div class="nav-divider"></div>
+    <ul class="nav-links">
+      <li class="nav-item active" data-section="home" onclick="showSection('home',this)">
+        <span class="nav-icon">⌂</span><span class="nav-label">Command Hub</span>
+      </li>
+      <li class="nav-item" data-section="symmetric" onclick="showSection('symmetric',this)">
+        <span class="nav-icon">⇌</span><span class="nav-label">Symmetric</span>
+      </li>
+      <li class="nav-item" data-section="asymmetric" onclick="showSection('asymmetric',this)">
+        <span class="nav-icon">⇢</span><span class="nav-label">Asymmetric</span>
+      </li>
+      <li class="nav-item" data-section="hash" onclick="showSection('hash',this)">
+        <span class="nav-icon">#</span><span class="nav-label">Hashing</span>
+      </li>
+      <li class="nav-item" data-section="dh" onclick="showSection('dh',this)">
+        <span class="nav-icon">⚷</span><span class="nav-label">Diffie-Hellman</span>
+      </li>
+    </ul>
+    <div class="nav-footer">
+      <button class="logout-btn" onclick="logout()">⏻ LOGOUT</button>
+    </div>
+  </nav>
+
+  <!-- CONTENT AREA -->
+  <main class="content-area">
+    <div class="top-bar">
+      <button class="hamburger" onclick="toggleNav()">☰</button>
+      <div class="topbar-title" id="topbarTitle">COMMAND HUB</div>
+      <div class="topbar-right">
+        <span class="status-dot"></span>
+        <span class="status-text">SYSTEM ONLINE</span>
+      </div>
+    </div>
+
+    <!-- ── HOME ── -->
+    <section id="homeSection" class="section active">
+      <div class="section-header">
+        <h2 class="section-title">CRYPTOGRAPHY LAB</h2>
+        <p class="section-desc">Select a cryptographic domain to begin your operation</p>
+      </div>
+      <div class="home-grid">
+        <div class="home-tile tile-sym" onclick="showSection('symmetric', document.querySelector('[data-section=symmetric]'))">
+          <div class="tile-glow"></div>
+          <div class="tile-icon">⇌</div>
+          <h3 class="tile-title">SYMMETRIC</h3>
+          <p class="tile-desc">AES · DES · Blowfish · SHA-1 · JCA</p>
+          <div class="tile-tag">Same key for encrypt/decrypt</div>
+          <div class="tile-arrow">→</div>
+        </div>
+        <div class="home-tile tile-asym" onclick="showSection('asymmetric', document.querySelector('[data-section=asymmetric]'))">
+          <div class="tile-glow"></div>
+          <div class="tile-icon">⇢</div>
+          <h3 class="tile-title">ASYMMETRIC</h3>
+          <p class="tile-desc">RSA · Diffie-Hellman</p>
+          <div class="tile-tag">Public / Private key pair</div>
+          <div class="tile-arrow">→</div>
+        </div>
+      </div>
+      <div class="stats-row">
+        <div class="stat-panel"><span class="stat-num">7</span><span class="stat-lbl">Algorithms</span></div>
+        <div class="stat-panel"><span class="stat-num">4</span><span class="stat-lbl">Operations</span></div>
+        <div class="stat-panel"><span class="stat-num">EDU</span><span class="stat-lbl">Simulation</span></div>
+      </div>
+    </section>
+
+    <!-- ── SYMMETRIC ── -->
+    <section id="symmetricSection" class="section">
+      <div class="section-header">
+        <h2 class="section-title">SYMMETRIC CRYPTOGRAPHY</h2>
+        <p class="section-desc">Configure algorithm, operation and provide your input data</p>
+      </div>
+      <div class="controls-bar">
+        <div class="select-group">
+          <label class="ctrl-label">ALGORITHM</label>
+          <div class="neon-select-wrap">
+            <select id="symAlgo" class="neon-select" onchange="updateSymInfo()">
+              <option value="AES">AES-256</option>
+              <option value="DES">DES</option>
+              <option value="Blowfish">Blowfish</option>
+              <option value="SHA1">SHA-1 (Hash)</option>
+              <option value="JCA">JCA Sim</option>
+            </select>
+          </div>
+        </div>
+        <div class="select-group">
+          <label class="ctrl-label">OPERATION</label>
+          <div class="neon-select-wrap">
+            <select id="symOp" class="neon-select" onchange="updateSymOp()">
+              <option value="encrypt">ENCRYPT</option>
+              <option value="decrypt">DECRYPT</option>
+              <option value="hash">HASH</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn-info" onclick="showInfo('sym')">ℹ ALGORITHM INFO</button>
+      </div>
+      <div class="op-layout">
+        <div class="op-left">
+          <div class="panel-label">INPUT TERMINAL</div>
+          <div class="float-field">
+            <textarea id="symInput" class="neon-textarea" placeholder=" " rows="5"></textarea>
+            <label class="float-label">Plaintext / Ciphertext</label>
+          </div>
+          <div class="float-field" id="symKeyField">
+            <input type="text" id="symKey" class="neon-input full" placeholder=" "/>
+            <label class="float-label">Secret Key</label>
+          </div>
+          <button class="btn-primary run-btn" onclick="runSymmetric()">
+            <span>▶ RUN OPERATION</span>
+          </button>
+        </div>
+        <div class="op-right">
+          <div class="panel-label">OUTPUT TERMINAL</div>
+          <div class="terminal-output" id="symOutput">
+            <span class="terminal-prompt">CYPER_NET:~$ </span>
+            <span class="terminal-result" id="symResult">Awaiting input...</span>
+          </div>
+          <div class="output-actions">
+            <button class="btn-copy" onclick="copyOutput('symResult')">⎘ COPY</button>
+          </div>
+          <div class="security-meter-wrap">
+            <div class="panel-label">SECURITY ANALYSIS</div>
+            <div class="meter-row">
+              <canvas id="symMeter" width="110" height="110"></canvas>
+              <div class="meter-info">
+                <div class="meter-label" id="symSecLabel">—</div>
+                <div class="meter-details" id="symSecDetails"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── ASYMMETRIC ── -->
+    <section id="asymmetricSection" class="section">
+      <div class="section-header">
+        <h2 class="section-title">ASYMMETRIC CRYPTOGRAPHY</h2>
+        <p class="section-desc">Public-key cryptography simulation</p>
+      </div>
+      <div class="controls-bar">
+        <div class="select-group">
+          <label class="ctrl-label">ALGORITHM</label>
+          <div class="neon-select-wrap">
+            <select id="asymAlgo" class="neon-select" onchange="updateAsymInfo()">
+              <option value="RSA">RSA</option>
+              <option value="DH">Diffie-Hellman</option>
+            </select>
+          </div>
+        </div>
+        <div class="select-group">
+          <label class="ctrl-label">OPERATION</label>
+          <div class="neon-select-wrap">
+            <select id="asymOp" class="neon-select">
+              <option value="encrypt">ENCRYPT</option>
+              <option value="decrypt">DECRYPT</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn-info" onclick="showInfo('asym')">ℹ ALGORITHM INFO</button>
+      </div>
+      <div class="op-layout">
+        <div class="op-left">
+          <div class="panel-label">INPUT TERMINAL</div>
+          <div class="float-field">
+            <textarea id="asymInput" class="neon-textarea" placeholder=" " rows="5"></textarea>
+            <label class="float-label">Plaintext / Ciphertext</label>
+          </div>
+          <div class="float-field">
+            <input type="text" id="asymKey" class="neon-input full" placeholder=" "/>
+            <label class="float-label">Public / Private Key</label>
+          </div>
+          <button class="btn-primary run-btn" onclick="runAsymmetric()">
+            <span>▶ RUN OPERATION</span>
+          </button>
+        </div>
+        <div class="op-right">
+          <div class="panel-label">OUTPUT TERMINAL</div>
+          <div class="terminal-output" id="asymOutput">
+            <span class="terminal-prompt">CYPER_NET:~$ </span>
+            <span class="terminal-result" id="asymResult">Awaiting input...</span>
+          </div>
+          <div class="output-actions">
+            <button class="btn-copy" onclick="copyOutput('asymResult')">⎘ COPY</button>
+          </div>
+          <div class="security-meter-wrap">
+            <div class="panel-label">SECURITY ANALYSIS</div>
+            <div class="meter-row">
+              <canvas id="asymMeter" width="110" height="110"></canvas>
+              <div class="meter-info">
+                <div class="meter-label" id="asymSecLabel">—</div>
+                <div class="meter-details" id="asymSecDetails"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── HASH ── -->
+    <section id="hashSection" class="section">
+      <div class="section-header">
+        <h2 class="section-title">SHA-1 HASHING</h2>
+        <p class="section-desc">One-way cryptographic hash function simulation</p>
+      </div>
+      <div class="op-layout">
+        <div class="op-left">
+          <div class="panel-label">INPUT TERMINAL</div>
+          <div class="float-field">
+            <textarea id="hashInput" class="neon-textarea" placeholder=" " rows="6"></textarea>
+            <label class="float-label">Input text to hash</label>
+          </div>
+          <button class="btn-primary run-btn" onclick="runHash()">
+            <span>▶ GENERATE HASH</span>
+          </button>
+        </div>
+        <div class="op-right">
+          <div class="panel-label">OUTPUT TERMINAL</div>
+          <div class="terminal-output" id="hashOutput">
+            <span class="terminal-prompt">CYPER_NET:~$ </span>
+            <span class="terminal-result" id="hashResult">Awaiting input...</span>
+          </div>
+          <div class="output-actions">
+            <button class="btn-copy" onclick="copyOutput('hashResult')">⎘ COPY</button>
+          </div>
+          <div class="security-meter-wrap">
+            <div class="panel-label">SECURITY ANALYSIS</div>
+            <div class="meter-row">
+              <canvas id="hashMeter" width="110" height="110"></canvas>
+              <div class="meter-info">
+                <div class="meter-label" id="hashSecLabel">—</div>
+                <div class="meter-details" id="hashSecDetails"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── DIFFIE-HELLMAN ── -->
+    <section id="dhSection" class="section">
+      <div class="section-header">
+        <h2 class="section-title">DIFFIE-HELLMAN KEY EXCHANGE</h2>
+        <p class="section-desc">Compute shared secret over public channel</p>
+        <button class="btn-info" onclick="showInfo('dh')">ℹ HOW IT WORKS</button>
+      </div>
+      <div class="op-layout">
+        <div class="op-left">
+          <div class="panel-label">PARAMETERS</div>
+          <div class="dh-grid">
+            <div class="float-field">
+              <input type="number" id="dhG" class="neon-input full" placeholder=" " value="5"/>
+              <label class="float-label">g (generator)</label>
+            </div>
+            <div class="float-field">
+              <input type="number" id="dhP" class="neon-input full" placeholder=" " value="23"/>
+              <label class="float-label">p (prime modulus)</label>
+            </div>
+            <div class="float-field">
+              <input type="number" id="dhA" class="neon-input full" placeholder=" " value="6"/>
+              <label class="float-label">a (Alice private key)</label>
+            </div>
+            <div class="float-field">
+              <input type="number" id="dhB" class="neon-input full" placeholder=" " value="15"/>
+              <label class="float-label">b (Bob private key)</label>
+            </div>
+          </div>
+          <button class="btn-primary run-btn" onclick="runDH()">
+            <span>▶ COMPUTE EXCHANGE</span>
+          </button>
+        </div>
+        <div class="op-right">
+          <div class="panel-label">EXCHANGE TERMINAL</div>
+          <div class="terminal-output dh-terminal" id="dhOutput">
+            <span class="terminal-prompt">CYPER_NET:~$ </span>
+            <span class="terminal-result" id="dhResult">Awaiting parameters...</span>
+          </div>
+          <div class="output-actions">
+            <button class="btn-copy" onclick="copyOutput('dhResult')">⎘ COPY</button>
+          </div>
+          <div class="security-meter-wrap">
+            <div class="panel-label">SECURITY ANALYSIS</div>
+            <div class="meter-row">
+              <canvas id="dhMeter" width="110" height="110"></canvas>
+              <div class="meter-info">
+                <div class="meter-label" id="dhSecLabel">—</div>
+                <div class="meter-details" id="dhSecDetails"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- ═══════════════════ INFO MODAL ═══════════════════ -->
+<div id="infoModal" class="modal-overlay" onclick="closeModal(event)">
+  <div class="modal-panel">
+    <button class="modal-close" onclick="closeInfo()">✕</button>
+    <div class="modal-scan"></div>
+    <h2 class="modal-title" id="modalTitle">Algorithm Info</h2>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════ TOAST ═══════════════════ -->
+<div id="toast" class="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
